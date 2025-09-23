@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 // @ts-nocheck
 /*
-  Simplified per request:
-  - Removed the Estimate Form section (kept sticky CTA + SMS/Call/Email).
-  - Left LocalBusiness + FAQ JSON-LD for SEO.
-  - Fixed an unterminated string in a style attribute (padding) that caused a TSX syntax error.
-  - All tests unchanged.
+  Full site code (mobile-optimized, Cloudflare Pages friendly).
+  - No testimonials (per your request).
+  - Sticky Call/Text/Email bar.
+  - LocalBusiness + FAQ JSON-LD.
+  - Strong mobile layout, CSS reset, safe-area padding, aspect-ratio carousel.
+  - TypeScript-friendly (no implicit any, typed refs).
+  - Portfolio images use /public paths (drop files into public/portfolio/...).
 */
 
 // ====== CONFIG ======
@@ -28,13 +30,17 @@ const BUSINESS = {
   ],
   license: "WA Lic # JOHNHHC920Q4",
   hours: "Mon–Sat 8am–6pm",
-  url: "https://johnhuntbuilds.com",
+  url: "https://johnhuntbuilds.com", // update to your live domain later
 };
 
-const LOGO_URL = "";
-const HERO_IMAGE_URL = "https://images.unsplash.com/photo-1597085683601-e4654bd9a1f7?q=80&w=1600&auto=format&fit=crop";
-const HERO_BG_URL = "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1600&auto=format&fit=crop";
+// Logo (optional). If empty, renders initial lockup.
+const LOGO_URL = ""; // e.g. "/logo.svg"
 
+// Hero images (replace when you have real photos)
+const HERO_IMAGE_URL = "/portfolio/hero.jpg"; // place file at public/portfolio/hero.jpg
+const HERO_BG_URL = "/portfolio/hero-bg.jpg"; // optional background; safe to leave missing
+
+// ====== CONTENT ======
 const SERVICES = [
   { title: "General Carpentry", desc: "Trim, doors, framing, repairs, custom built-ins." },
   { title: "Kitchen & Bath Updates", desc: "Cabinet installs, tile, fixtures, caulk & grout refresh." },
@@ -52,13 +58,14 @@ const FAQS = [
   { q: "What don’t you do?", a: "We avoid gas work, main electrical panel changes, roofing beyond minor repairs, and any work requiring specialty permits we don’t hold. We’ll refer trusted partners when needed." },
 ];
 
+// Gallery — replace with your real photos in public/portfolio/
 const GALLERY = [
-  { src: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=2000&auto=format&fit=crop", alt: "Exterior siding and trim upgrade" },
-  { src: "https://images.unsplash.com/photo-1556910633-5099dc3971d7?q=80&w=1600&auto=format&fit=crop", alt: "Kitchen cabinet install and backsplash" },
-  { src: "https://images.unsplash.com/photo-1572985025058-f27aeca1b1fd?q=80&w=1600&auto=format&fit=crop", alt: "Privacy fence with hog-wire detail" },
-  { src: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1600&auto=format&fit=crop", alt: "Deck resurfacing and rails" },
-  { src: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?q=80&w=1600&auto=format&fit=crop", alt: "Built-in shelving and paint" },
-  { src: "https://images.unsplash.com/photo-1582582621952-eb88c03c3b66?q=80&w=1600&auto=format&fit=crop", alt: "Accent wall and trim" },
+  { src: "/portfolio/deck.jpg", alt: "Deck resurfacing and rails" },
+  { src: "/portfolio/kitchen.jpg", alt: "Kitchen cabinet install and backsplash" },
+  { src: "/portfolio/fence.jpg", alt: "Privacy fence with hog-wire detail" },
+  { src: "/portfolio/siding.jpg", alt: "Exterior siding and trim upgrade" },
+  { src: "/portfolio/drywall.jpg", alt: "Drywall patch and paint finish" },
+  { src: "/portfolio/builtins.jpg", alt: "Custom built-in shelving" },
 ];
 
 const STATS = [
@@ -67,47 +74,53 @@ const STATS = [
   { label: "5‑Star Reviews", value: 120 },
 ];
 
+// ===== Utilities (and lightweight tests) =====
 export function computeClipInset(value: unknown): string {
   const n = Number(value);
-  const v = Number.isFinite(n) ? Math.max(0, Math.min(100, n)) : 50;
+  const v = Number.isFinite(n) ? Math.max(0, Math.min(100, n)) : 50; // default to 50 on invalid input
   return `inset(0 ${100 - v}% 0 0)`;
 }
 
+// Minimal runtime tests (console only) — DO NOT remove existing tests
 (function runTests() {
   try {
     console.assert(computeClipInset(0) === 'inset(0 100% 0 0)', 'clip at 0% failed');
     console.assert(computeClipInset(50) === 'inset(0 50% 0 0)', 'clip at 50% failed');
     console.assert(computeClipInset(100) === 'inset(0 0% 0 0)', 'clip at 100% failed');
+    // Added tests (non-breaking)
     console.assert(computeClipInset(-10) === 'inset(0 100% 0 0)', 'clamp below 0 failed');
     console.assert(computeClipInset(200) === 'inset(0 0% 0 0)', 'clamp above 100 failed');
     console.assert(computeClipInset('75') === 'inset(0 25% 0 0)', 'string number failed');
     console.assert(computeClipInset('not-a-number') === 'inset(0 50% 0 0)', 'NaN default failed');
+    // Extra coverage without changing behavior
     console.assert(computeClipInset(null) === 'inset(0 50% 0 0)', 'null default failed');
     console.assert(computeClipInset(undefined) === 'inset(0 50% 0 0)', 'undefined default failed');
     console.assert(computeClipInset(true) === 'inset(0 99% 0 0)', 'boolean true cast failed');
     console.assert(computeClipInset(Infinity) === 'inset(0 50% 0 0)', 'Infinity default failed');
     console.assert(computeClipInset(33.3).startsWith('inset(0 66.7'), 'decimal rounding sanity');
+    // NEW tests (do not modify existing ones above)
     console.assert(computeClipInset(1) === 'inset(0 99% 0 0)', 'integer cast 1 failed');
     console.assert(computeClipInset(' 40 ') === 'inset(0 60% 0 0)', 'trimmed string number failed');
     console.assert(computeClipInset({}) === 'inset(0 50% 0 0)', 'object default failed');
     console.assert(computeClipInset('100abc') === 'inset(0 50% 0 0)', 'garbage numeric string default failed');
-  } catch (e) {}
+  } catch (e) { /* no-op in preview */ }
 })();
 
+// ===== Carousel (no deps) =====
 function useCarousel(length: number, intervalMs: number = 5000) {
   const [index, setIndex] = useState(0);
   const timer = useRef<number | null>(null);
   useEffect(() => {
     if (length <= 1) return;
-    timer.current = setInterval(() => setIndex((i) => (i + 1) % length), intervalMs);
-    return () => { if (timer.current) clearInterval(timer.current); };
+    timer.current = window.setInterval(() => setIndex((i) => (i + 1) % length), intervalMs);
+    return () => { if (timer.current !== null) window.clearInterval(timer.current); };
   }, [length, intervalMs]);
   const prev = () => setIndex((i) => (i - 1 + length) % length);
   const next = () => setIndex((i) => (i + 1) % length);
   return { index, prev, next, setIndex };
 }
 
-export default function Site() {
+export default function App() {
   const jsonLd = useMemo(() => ({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -126,11 +139,7 @@ export default function Site() {
   const faqLd = useMemo(() => ({
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: FAQS.map(f => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a }
-    }))
+    mainEntity: FAQS.map(f => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } }))
   }), []);
 
   const carousel = useCarousel(GALLERY.length, 5000);
@@ -138,54 +147,64 @@ export default function Site() {
   return (
     <div style={{ minHeight: '100vh', color: '#111', background: '#fff', overflowX: 'hidden' }}>
       <style>{`
-        :root *,*::before,*::after{ box-sizing:border-box }
-html,body,#root{ height:100%; width:100% }
-html,body{ margin:0; padding:0; overflow-x:hidden }  /* ← removes left offset + hides accidental 1px overflow */
-img,video{ max-width:100%; height:auto; display:block } /* no image overflow */{--gold:#d4af37;--ink:#111;--paper:#fff;--gray:#f7f7f7}
+        :root{--gold:#d4af37;--ink:#111;--paper:#fff;--gray:#f7f7f7}
+        /* --- Mobile-first base fixes --- */
+        *,*::before,*::after{ box-sizing:border-box }
+        html,body,#root{ height:100%; width:100% }
+        html,body{ margin:0; padding:0; overflow-x:hidden }
+        img,video{ max-width:100%; height:auto; display:block }
+
         body{background:var(--paper);} 
-        .container{max-width:1200px;margin:0 auto;padding:0 16px}
-        .btn{display:inline-flex;align-items:center;gap:8px;border-radius:9999px;padding:10px 16px;border:1px solid #ccc;background:var(--gold);color:#111;text-decoration:none;font-weight:800;letter-spacing:.02em}
-        .btn.secondary{background:transparent;color:#111;border-color:#ccc}
-        .btn.inverse{background:#111;color:#fff;border-color:#111}
-        .card{border:1px solid #e0e0e0;border-radius:16px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-        .grid{display:grid;gap:24px}
-        @media(min-width:640px){.grid-sm-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
-        @media(min-width:1024px){.grid-lg-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
-        .uppercase{text-transform:uppercase}
-        .brand{display:flex;align-items:center;gap:10px;color:#111}
-        .brand .name{font-size:18px;font-weight:900;letter-spacing:.06em}
-        .section{background:#fff;color:#111}
-        .section.light{background:var(--gray)}
-        .hero{position:relative;background:url('${HERO_BG_URL}') center/cover no-repeat;}
-        .hero::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0.7);} 
-        .heroContent{position:relative;z-index:1}
-        .heroTitle{font-size:44px;line-height:1.06;font-weight:900;letter-spacing:.06em;color:#111}
-        @media(min-width:768px){.heroTitle{font-size:56px}}
-        .sub{font-size:18px;color:#444}
-        .statBand{background:var(--gray);border-block:1px solid #e5e5e5}
-        .stat{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}
-        .stat .value{font-size:28px;font-weight:900;color:#111}
-        .stat .label{font-size:12px;color:#555;margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
-        .carousel{position:relative;border-radius:16px;overflow:hidden;box-shadow:0 10px 20px rgba(0,0,0,.15)}
-        .carousel img{width:100%;height:540px;object-fit:cover;display:block}
-        .dots{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:8px}
-        .dot{width:10px;height:10px;border-radius:9999px;background:rgba(0,0,0,.2);border:1px solid rgba(0,0,0,.4)}
-        .dot.active{background:#111}
-        header.sticky{position:sticky;top:0;z-index:40;backdrop-filter:blur(6px);background:rgba(255,255,255,.9);border-bottom:1px solid #e5e5e5}
-        footer{border-top:1px solid #e5e5e5;background:#fafafa}
-        .assurance{background:var(--gray);border-block:1px solid #e5e5e5}
-        .heroGrid{display:grid;gap:24px;align-items:center}
-        @media(min-width:900px){.heroGrid{grid-template-columns:1.1fr .9fr}}
-        .splash{position:relative;border-radius:16px;overflow:hidden;min-height:280px;box-shadow:0 10px 20px rgba(0,0,0,.15)}
-        @media(min-width:768px){.splash{min-height:360px}}
-        .splash img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-        .splash .badge{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,.9);color:#111;border-radius:9999px;padding:6px 10px;font-weight:700;letter-spacing:.04em}
-        .stickyCta{position:sticky;bottom:0;z-index:50;background:#111;color:#fff;display:flex;gap:12px;justify-content:center;align-items:center;padding:10px}
+        .container{ max-width:1200px; margin:0 auto; padding:0 14px }
+        .btn{ display:inline-flex; align-items:center; gap:8px; border-radius:9999px; padding:12px 16px; border:1px solid #ccc; background:var(--gold); color:#111; text-decoration:none; font-weight:800; letter-spacing:.02em }
+        .btn.secondary{ background:transparent; color:#111; border-color:#ccc }
+        .btn.inverse{ background:#111; color:#fff; border-color:#111 }
+        .card{ border:1px solid #e0e0e0; border-radius:16px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.08) }
+        .grid{ display:grid; gap:16px }
+        @media(min-width:640px){ .grid-sm-2{ grid-template-columns:repeat(2,minmax(0,1fr)) } }
+        @media(min-width:1024px){ .grid-lg-3{ grid-template-columns:repeat(3,minmax(0,1fr)) } }
+        .uppercase{ text-transform:uppercase }
+        .brand{ display:flex; align-items:center; gap:10px; color:#111 }
+        .brand .name{ font-size:18px; font-weight:900; letter-spacing:.06em }
+        .section{ background:#fff; color:#111 }
+        .section.light{ background:var(--gray) }
+        .hero{ position:relative; background:${HERO_BG_URL ? `url('${HERO_BG_URL}') center/cover no-repeat` : 'var(--gray)'}; }
+        .hero::before{ content:''; position:absolute; inset:0; background:rgba(255,255,255,0.7); } /* readability overlay */
+        .heroContent{ position:relative; z-index:1 }
+        .heroTitle{ font-size:36px; line-height:1.12; font-weight:900; letter-spacing:.06em; color:#111 }
+        @media(min-width:768px){ .heroTitle{ font-size:56px } }
+        .sub{ font-size:16px; color:#444 }
+        .statBand{ background:var(--gray); border-block:1px solid #e5e5e5 }
+        .stat{ display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px }
+        .stat .value{ font-size:24px; font-weight:900; color:#111 }
+        @media(min-width:640px){ .stat .value{ font-size:28px } }
+        .stat .label{ font-size:12px; color:#555; margin-top:4px; text-transform:uppercase; letter-spacing:.08em }
+        .carousel{ position:relative; border-radius:16px; overflow:hidden; box-shadow:0 10px 20px rgba(0,0,0,.15) }
+        .carousel img{ width:100%; aspect-ratio:16/9; height:auto; object-fit:cover }
+        @media(min-width:768px){ .carousel img{ height:540px; aspect-ratio:auto } }
+        .dots{ position:absolute; left:0; right:0; bottom:10px; display:flex; justify-content:center; gap:10px }
+        .dot{ width:12px; height:12px; border-radius:9999px; background:rgba(0,0,0,.2); border:1px solid rgba(0,0,0,.4) }
+        .dot.active{ background:#111 }
+        header.sticky{ position:sticky; top:0; z-index:40; backdrop-filter:blur(6px); background:rgba(255,255,255,.9); border-bottom:1px solid #e5e5e5 }
+        footer{ border-top:1px solid #e5e5e5; background:#fafafa }
+        .assurance{ background:var(--gray); border-block:1px solid #e5e5e5 }
+        .heroGrid{ display:grid; gap:24px; align-items:center }
+        @media(min-width:900px){ .heroGrid{ grid-template-columns:1.1fr .9fr } }
+        .splash{ position:relative; border-radius:16px; overflow:hidden; min-height:220px; box-shadow:0 10px 20px rgba(0,0,0,.15) }
+        @media(min-width:768px){ .splash{ min-height:360px } }
+        .splash img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover }
+        .splash .badge{ position:absolute; left:12px; bottom:12px; background:rgba(255,255,255,.9); color:#111; border-radius:9999px; padding:6px 10px; font-weight:700; letter-spacing:.04em }
+        /* Sticky CTA with safe-area for iOS */
+        .stickyCta{ position:sticky; bottom:0; z-index:50; background:#111; color:#fff; display:flex; gap:12px; justify-content:center; align-items:center; padding:10px; padding-bottom:calc(10px + env(safe-area-inset-bottom)) }
+        /* Show sticky bar mainly on mobile */
+        @media(min-width:768px){ .stickyCta{ display:none } }
       `}</style>
 
+      {/* JSON-LD */}
       <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
 
+      {/* Header */}
       <header className="sticky">
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0' }}>
           <div className="brand">
@@ -207,7 +226,7 @@ img,video{ max-width:100%; height:auto; display:block } /* no image overflow */{
 
       {/* Hero */}
       <section className="section hero">
-        <div className="container heroContent" style={{ padding: '72px 0' }}>
+        <div className="container heroContent" style={{ padding: '56px 0' }}>
           <div className="heroGrid">
             <div>
               <h1 className="heroTitle">{BUSINESS.name}</h1>
@@ -220,7 +239,7 @@ img,video{ max-width:100%; height:auto; display:block } /* no image overflow */{
               <div style={{ marginTop: 8, color: '#555', fontSize: 13 }}>{BUSINESS.license}</div>
             </div>
             <div className="splash" aria-label="Hero splash image">
-              <img src={HERO_IMAGE_URL} alt="Handyman at work (placeholder)" loading="eager" />
+              <img src={HERO_IMAGE_URL} alt="Handyman at work" loading="eager" decoding="async" />
               <div className="badge">On‑site • Clean • Precise</div>
             </div>
           </div>
@@ -253,12 +272,17 @@ img,video{ max-width:100%; height:auto; display:block } /* no image overflow */{
 
       {/* Portfolio */}
       <section id="portfolio" className="section">
-        <div className="container" style={{ padding: '48px 0' }}>
+        <div className="container" style={{ padding: '40px 0' }}>
           <h2 className="uppercase" style={{ fontSize: 32, fontWeight: 900, color: '#111' }}>Portfolio</h2>
           <p className="sub" style={{ marginTop: 6 }}>Selected work across {BUSINESS.city}.</p>
 
           <div className="carousel" style={{ marginTop: 20 }}>
-            <img src={GALLERY[carousel.index].src} alt={GALLERY[carousel.index].alt} />
+            <img
+              src={GALLERY[carousel.index].src}
+              alt={GALLERY[carousel.index].alt}
+              loading="lazy"
+              decoding="async"
+            />
             <div className="dots">
               {GALLERY.map((_, i) => (
                 <button
@@ -281,7 +305,7 @@ img,video{ max-width:100%; height:auto; display:block } /* no image overflow */{
 
       {/* Services */}
       <section id="services" className="section light">
-        <div className="container" style={{ padding: '56px 0' }}>
+        <div className="container" style={{ padding: '48px 0' }}>
           <h2 className="uppercase" style={{ fontSize: 32, fontWeight: 900, color: '#111' }}>Services</h2>
           <div className="grid grid-sm-2 grid-lg-3" style={{ marginTop: 16 }}>
             {SERVICES.map(({ title, desc }) => (
@@ -311,7 +335,7 @@ img,video{ max-width:100%; height:auto; display:block } /* no image overflow */{
 
       {/* FAQ */}
       <section id="faq" className="section light">
-        <div className="container" style={{ maxWidth: 800, padding: '56px 0' }}>
+        <div className="container" style={{ maxWidth: 800, padding: '48px 0' }}>
           <h2 className="uppercase" style={{ fontSize: 32, fontWeight: 900, color: '#111' }}>FAQ</h2>
           <div style={{ marginTop: 12 }}>
             {FAQS.map((f, i) => (
@@ -326,7 +350,7 @@ img,video{ max-width:100%; height:auto; display:block } /* no image overflow */{
 
       {/* Footer */}
       <footer>
-        <div className="container" style={{ padding: '40px 0', display: 'grid', gap: 24, gridTemplateColumns: '1fr', alignItems: 'start', color: '#333' }}>
+        <div className="container" style={{ padding: '32px 0', display: 'grid', gap: 24, gridTemplateColumns: '1fr', alignItems: 'start', color: '#333' }}>
           <div>
             <div className="brand"><div style={{ width: 28, height: 28, background: 'var(--gold)', color: '#111', fontWeight: 900, display: 'grid', placeItems: 'center', borderRadius: 6 }}>JH</div><span className="name">{BUSINESS.name}</span></div>
             <p style={{ marginTop: 8, color: '#555' }}>Quality fixes and small builds without the runaround.</p>
@@ -347,7 +371,7 @@ img,video{ max-width:100%; height:auto; display:block } /* no image overflow */{
         </div>
       </footer>
 
-      {/* Sticky CTA bar */}
+      {/* Sticky CTA (mobile) */}
       <div className="stickyCta">
         <a href={BUSINESS.phoneHref} className="btn" style={{ background: '#fff' }}>Call</a>
         <a href={BUSINESS.smsHref} className="btn secondary">Text</a>
