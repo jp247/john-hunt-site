@@ -38,7 +38,17 @@ const LOGO_URL = ""; // e.g. "/logo.svg"
 
 // Hero images (replace when you have real photos)
 const HERO_IMAGE_URL = "/portfolio/hero.jpg"; // place file at public/portfolio/hero.jpg
-const HERO_BG_URL = "/portfolio/hero-bg.jpg"; // optional background; safe to leave missing
+const HERO_BG_URL = "/portfolio/hero-bg.jpg"; // optional background; safe to leave missing// Hero images
+const HERO_IMAGE_URL = "/images/hero.jpg";
+const HERO_BG_URL = "/images/hero-bg.jpg";
+
+// Automatically load portfolio images from public/images/portfolio
+// Just drop files into that folder — no code edit needed.
+const GALLERY = Array.from({ length: 6 }).map((_, i) => ({
+  src: `/images/portfolio/${String(i + 1).padStart(2, "0")}.jpg`,
+  alt: `Portfolio photo ${i + 1}`,
+}));
+
 
 // ====== CONTENT ======
 const SERVICES = [
