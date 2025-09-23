@@ -136,9 +136,12 @@ export default function Site() {
   const carousel = useCarousel(GALLERY.length, 5000);
 
   return (
-    <div style={{ minHeight: '100vh', color: '#111', background: '#fff' }}>
+    <div style={{ minHeight: '100vh', color: '#111', background: '#fff', overflowX: 'hidden' }}>
       <style>{`
-        :root{--gold:#d4af37;--ink:#111;--paper:#fff;--gray:#f7f7f7}
+        :root *,*::before,*::after{ box-sizing:border-box }
+html,body,#root{ height:100%; width:100% }
+html,body{ margin:0; padding:0; overflow-x:hidden }  /* ← removes left offset + hides accidental 1px overflow */
+img,video{ max-width:100%; height:auto; display:block } /* no image overflow */{--gold:#d4af37;--ink:#111;--paper:#fff;--gray:#f7f7f7}
         body{background:var(--paper);} 
         .container{max-width:1200px;margin:0 auto;padding:0 16px}
         .btn{display:inline-flex;align-items:center;gap:8px;border-radius:9999px;padding:10px 16px;border:1px solid #ccc;background:var(--gold);color:#111;text-decoration:none;font-weight:800;letter-spacing:.02em}
