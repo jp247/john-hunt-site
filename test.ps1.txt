@@ -1,0 +1,33 @@
+# 0) Go to project root
+Set-Location "H:\John Hunt Cloudflare Pages\john-hunt-site"
+
+# 1) Ensure assets folder exists
+New-Item -ItemType Directory -Path ".\src\assets" -Force | Out-Null
+
+# 2) Copy hero images from public to src/assets (keep public copies as backup)
+if (Test-Path ".\public\images\hero.jpg")     { Copy-Item ".\public\images\hero.jpg"     ".\src\assets\hero.jpg" -Force }
+if (Test-Path ".\public\images\hero-bg.jpg")  { Copy-Item ".\public\images\hero-bg.jpg"  ".\src\assets\hero-bg.jpg" -Force }
+
+# 3) Patch App.tsx to use fingerprinted imports
+$path = ".\src\App.tsx"
+if (!(Test-Path $path)) { Write-Error "Can't find $path"; exit 1 }
+$app = Get-Content $path -Raw
+
+# 3a) Add imports after the first React import (idempotent)
+if ($app -notmatch "import\s+heroUrl\s+from\s+'\.\/assets\/hero\.jpg'") {
+  $app = $app -replace "import\s+\{?[^;\n]*\}\s+from\s+\"react\";",
+    "$0`r`nimport heroUrl from './assets/hero.jpg';`r`nimport heroBgUrl from './assets/hero-bg.jpg';"
+}
+
+# 3b) Replace the HERO_IMAGE_URL / HERO_BG_URL constants to use imports (remove cache-bust param usage)
+$app = $app -replace "const\s+ASSET_VERSION[\s\S]*?;", "const ASSET_VERSION = '';"  # neutralize, not used anymore
+$app = $app -replace "const\s+HERO_IMAGE_URL\s*=\s*`?[^;]+;", "const HERO_IMAGE_URL = heroUrl;"
+$app = $app -replace "const\s+HERO_BG_URL\s*=\s*`?[^;]+;",    "const HERO_BG_URL = heroBgUrl;"
+
+Set-Content $path $app -Encoding UTF8
+Write-Host "Patched App.tsx to use fingerprinted hero imports."
+
+# 4) Commit & push (Cloudflare will build)
+git add .
+git commit -m "Switch hero images to fingerprinted imports (fix caching for hero)"
+git push

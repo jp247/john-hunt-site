@@ -18,9 +18,9 @@ const BUSINESS = {
 };
 
 // Simple cache-busting for public images
-const ASSET_VERSION = (import.meta.env.VITE_ASSET_VERSION as string) || "";
-const HERO_IMAGE_URL = `/images/hero.jpg${ASSET_VERSION ? `?v=${ASSET_VERSION}` : ""}`;
-const HERO_BG_URL    = `/images/hero-bg.jpg${ASSET_VERSION ? `?v=${ASSET_VERSION}` : ""}`;
+const ASSET_VERSION = '';
+const HERO_IMAGE_URL = heroUrl;
+const HERO_BG_URL = heroBgUrl;
 
 // ===== Utilities + tests (keep) =====
 export function computeClipInset(value: unknown): string {
@@ -499,3 +499,4 @@ export default function App() {
     </div>
   );
 }
+
