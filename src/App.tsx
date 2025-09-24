@@ -470,7 +470,7 @@ export default function App() {
           <div className="reveal">
             <h3 style={{ fontWeight:800, margin:0 }}>Details</h3>
             <div style={{ marginTop:8 }}>{BUSINESS.license}</div>
-            <div style={{ color:'#555' }}>Build: <span data-build-tag="true">2025-09-23 21:37:10</span> · </div>
+            <div style={{ color:'#555' }}>Build: $12025-09-23 21:37:54</span> · </div>
           </div>
         </div>
       </footer>
@@ -494,6 +494,8 @@ export default function App() {
     </div>
   );
 }
+
+
 
 
 
