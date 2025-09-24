@@ -17,8 +17,8 @@ const BUSINESS = {
   phone: "206.226.7122",
   phoneHref: "tel:+12062267122",
   smsHref: "sms:+12062267122",
-  email: "john+test@example.com",
-  emailHref: "mailto:john+test@example.com",
+  email: "john+test@example.com",              // ← change later
+  emailHref: "mailto:john+test@example.com",   // ← change later
   ctaTagline: "Licensed • Insured • Free Estimates",
   city: "Seattle",
   serviceAreas: ["Greater Seattle Area","King County","North Seattle","Eastside","South Seattle"],
@@ -120,13 +120,14 @@ export default function App() {
         /* Header */
         header.sticky{position:sticky;top:0;z-index:40;backdrop-filter:blur(10px);background:rgba(255,255,255,.75);border-bottom:1px solid rgba(15,17,21,.08)}
         header.sticky.scrolled{background:rgba(255,255,255,.92);box-shadow:0 10px 28px rgba(15,17,21,.08)}
+        .brand .name{font-size:18px;font-weight:900;letter-spacing:.06em}
 
         /* Hero */
         .heroTitle{font-size:36px;line-height:1.12;font-weight:800}
         @media(min-width:768px){.heroTitle{font-size:56px}}
         .heroWrap{display:grid;gap:24px;align-items:center}
         @media(min-width:900px){.heroWrap{grid-template-columns:1.1fr .9fr}}
-        .heroBand{position:relative;min-height:clamp(420px, 54vh, 680px);background:${heroBgUrl ? `url('${heroBgUrl}') center/cover no-repeat` : "var(--gray)"}}
+        .heroBand{position:relative;min-height:clamp(420px,54vh,680px);background:${heroBgUrl ? `url('${heroBgUrl}') center/cover no-repeat` : "var(--gray)"}}
         .heroBand::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.88) 0%,rgba(255,255,255,.72) 46%,rgba(255,255,255,.30) 100%)}
 
         .splash{position:relative;border-radius:16px;overflow:hidden;min-height:300px;box-shadow:0 10px 22px rgba(0,0,0,.15)}
@@ -145,9 +146,24 @@ export default function App() {
         .navBtn.left{left:8px}
         .navBtn.right{right:8px}
 
-        /* Sections */
+        /* Section shells */
         .section{background:#fff;color:#111}
         .section.light{background:var(--gray)}
+
+        /* --- Premium cards & layout polish --- */
+        .card{border:1px solid rgba(15,17,21,.08);border-radius:16px;background:#fff;box-shadow:0 8px 26px rgba(15,17,21,.06)}
+        .card.pad{padding:16px}
+        .grid{display:grid;gap:16px}
+        @media(min-width:640px){.grid.sm-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+        @media(min-width:1024px){.grid.lg-3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+        .sectionBand{background:linear-gradient(180deg,#FAFBFC,#F6F7F9);border-block:1px solid rgba(15,17,21,.06)}
+        .sectionTitle{font-size:32px;font-weight:900;text-transform:uppercase}
+        .sectionSub{margin-top:6px;color:#566070}
+        .serviceTitle{font-weight:800;color:#111}
+        .serviceDesc{margin-top:8px;color:#555;font-size:14px}
+        .faqCard{border:1px solid #e5e5e5;border-radius:12px;padding:12px}
+        .faqCard summary{cursor:pointer;font-weight:700}
+        .faqCard div{margin-top:8px;color:#555}
       `}</style>
 
       {/* Structured data */}
@@ -159,7 +175,7 @@ export default function App() {
         <div className="container" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 0", gap:12 }}>
           <div className="brand" aria-label="Brand" style={{ display:"flex", alignItems:"center", gap:10 }}>
             <img src={logoUrl} alt="John Hunt Construction logo" style={{ width:32, height:32, objectFit:"contain", borderRadius:6 }} />
-            <span className="name" style={{ fontSize:18, fontWeight:900, letterSpacing:".06em" }}>{BUSINESS.name}</span>
+            <span className="name">{BUSINESS.name}</span>
           </div>
           <nav aria-label="Primary">
             <ul style={{ display:"flex", gap:12, flexWrap:"wrap", alignItems:"center", listStyle:"none", margin:0, padding:0 }}>
@@ -197,11 +213,11 @@ export default function App() {
           </div>
         </section>
 
-        {/* Portfolio — restored carousel */}
+        {/* Portfolio — carousel */}
         <section id="portfolio" className="section">
           <div className="container" style={{ padding:"44px 0" }}>
-            <h2 style={{ textTransform:"uppercase", fontSize:32, fontWeight:900 }}>Portfolio</h2>
-            <p style={{ marginTop:6, color:"#566070" }}>Selected work across {BUSINESS.city}.</p>
+            <h2 className="sectionTitle">Portfolio</h2>
+            <p className="sectionSub">Selected work across {BUSINESS.city}.</p>
 
             <div className="carousel" style={{ marginTop:20 }}>
               <img src={slides[carousel.index]} alt={`Portfolio slide ${carousel.index + 1}`} />
@@ -226,38 +242,67 @@ export default function App() {
           </div>
         </section>
 
-        {/* Services (kept minimal; tweak as you like) */}
-        <section id="services" className="section light">
-          <div className="container" style={{ padding:"44px 0" }}>
-            <h2 style={{ textTransform:"uppercase", fontSize:32, fontWeight:900 }}>Services</h2>
-            <ul style={{ marginTop:12, paddingLeft:18, color:"#333" }}>
-              <li>General Carpentry — trim, doors, framing, repairs, built-ins</li>
-              <li>Kitchen & Bath — cabinets, tile, fixtures, caulk & grout refresh</li>
-              <li>Fencing & Gates — wood, hog-wire, repairs, staining, privacy</li>
-              <li>Decks & Siding — new builds, resurfacing, railing, upgrades</li>
-              <li>Drywall & Paint — patches, texture match, interior repaint</li>
-              <li>Small Electrical/Plumbing — like-for-like fixture swaps*</li>
-            </ul>
-            <p style={{ marginTop:8, fontSize:12, color:"#777" }}>* Complex work referred to licensed specialists.</p>
+        {/* Services — premium card grid */}
+        <section id="services" className="section sectionBand">
+          <div className="container" style={{ padding:"48px 0" }}>
+            <h2 className="sectionTitle">Services</h2>
+            <p className="sectionSub">The most common work we’re asked to do.</p>
+
+            <div className="grid sm-2 lg-3" style={{ marginTop:16 }}>
+              <div className="card pad">
+                <div className="serviceTitle">General Carpentry</div>
+                <div className="serviceDesc">Trim, doors, framing, repairs, custom built-ins.</div>
+              </div>
+              <div className="card pad">
+                <div className="serviceTitle">Kitchen &amp; Bath</div>
+                <div className="serviceDesc">Cabinet installs, tile, fixtures, caulk &amp; grout refresh.</div>
+              </div>
+              <div className="card pad">
+                <div className="serviceTitle">Fencing &amp; Gates</div>
+                <div className="serviceDesc">Wood, hog-wire, repairs, staining, privacy solutions.</div>
+              </div>
+              <div className="card pad">
+                <div className="serviceTitle">Decks &amp; Siding</div>
+                <div className="serviceDesc">New builds, resurfacing, railing, safety upgrades.</div>
+              </div>
+              <div className="card pad">
+                <div className="serviceTitle">Drywall &amp; Paint</div>
+                <div className="serviceDesc">Patches, texture match, interior repaint, accent walls.</div>
+              </div>
+              <div className="card pad">
+                <div className="serviceTitle">Small Electrical/Plumbing</div>
+                <div className="serviceDesc">Like-for-like fixture swaps and minor repairs.*</div>
+              </div>
+            </div>
+
+            <p style={{ marginTop:12, fontSize:12, color:"#777" }}>
+              * Complex work referred to licensed specialists.
+            </p>
           </div>
         </section>
 
-        {/* FAQ (concise) */}
-        <section id="faq" className="section light">
-          <div className="container" style={{ maxWidth:800, padding:"44px 0" }}>
-            <h2 style={{ textTransform:"uppercase", fontSize:32, fontWeight:900 }}>FAQ</h2>
-            <details style={{ marginTop:12, border:"1px solid #e5e5e5", borderRadius:12, padding:12 }}>
-              <summary style={{ cursor:"pointer", fontWeight:700 }}>Do you charge for estimates?</summary>
-              <div style={{ marginTop:8, color:"#555" }}>No. Estimates are free within our service area. Remote quotes available with photos and measurements.</div>
-            </details>
-            <details style={{ marginTop:8, border:"1px solid #e5e5e5", borderRadius:12, padding:12 }}>
-              <summary style={{ cursor:"pointer", fontWeight:700 }}>How do you price jobs?</summary>
-              <div style={{ marginTop:8, color:"#555" }}>Small tasks are time-and-materials with a one-hour minimum. Larger projects get a fixed-price proposal after a walkthrough.</div>
-            </details>
-            <details style={{ marginTop:8, border:"1px solid #e5e5e5", borderRadius:12, padding:12 }}>
-              <summary style={{ cursor:"pointer", fontWeight:700 }}>Are you licensed and insured?</summary>
-              <div style={{ marginTop:8, color:"#555" }}>{BUSINESS.license}. COI available on request.</div>
-            </details>
+        {/* FAQ — tidy cards */}
+        <section id="faq" className="section sectionBand">
+          <div className="container" style={{ maxWidth:800, padding:"48px 0" }}>
+            <h2 className="sectionTitle">FAQ</h2>
+            <div style={{ marginTop:12, display:"grid", gap:10 }}>
+              <details className="faqCard">
+                <summary>Do you charge for estimates?</summary>
+                <div>No. Estimates are free within our service area. Remote quotes available with photos and measurements.</div>
+              </details>
+              <details className="faqCard">
+                <summary>How do you price jobs?</summary>
+                <div>Small tasks are time-and-materials with a one-hour minimum. Larger projects get a fixed-price proposal after a walkthrough.</div>
+              </details>
+              <details className="faqCard">
+                <summary>Are you licensed and insured?</summary>
+                <div>{BUSINESS.license}. COI available on request.</div>
+              </details>
+              <details className="faqCard">
+                <summary>Do you warranty your work?</summary>
+                <div>Yes—1-year workmanship warranty on qualifying jobs. Materials per manufacturer.</div>
+              </details>
+            </div>
           </div>
         </section>
       </main>
