@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 // @ts-nocheck
 
 const BUSINESS = {
@@ -9,11 +9,11 @@ const BUSINESS = {
   smsHref: "sms:+12062267122",
   email: "info@johnhuntconstruction.com",
   emailHref: "mailto:info@johnhuntconstruction.com",
-  ctaTagline: "Licensed • Insured • Free Estimates",
+  ctaTagline: "Licensed â€¢ Insured â€¢ Free Estimates",
   city: "Seattle",
   serviceAreas: ["Greater Seattle Area","King County","North Seattle","Eastside","South Seattle"],
   license: "WA Lic # JOHNHHC920Q4",
-  hours: "Mon–Sat 8am–6pm",
+  hours: "Monâ€“Sat 8amâ€“6pm",
   url: "https://johnhuntbuilds.com"
 };
 
@@ -150,8 +150,8 @@ export default function App() {
       { "@type":"Question", name:"Do you charge for estimates?", acceptedAnswer:{ "@type":"Answer", text:"No. Estimates are free within our service area. Remote quotes available with photos and measurements." }},
       { "@type":"Question", name:"How do you price jobs?", acceptedAnswer:{ "@type":"Answer", text:"Small tasks are often time-and-materials with a one-hour minimum. Larger projects receive a fixed-price proposal after a walkthrough." }},
       { "@type":"Question", name:"Are you licensed and insured?", acceptedAnswer:{ "@type":"Answer", text:`${BUSINESS.license}. COI available on request.` }},
-      { "@type":"Question", name:"Do you warranty your work?", acceptedAnswer:{ "@type":"Answer", text:"Yes—1-year workmanship warranty on qualifying jobs. Materials per manufacturer." }},
-      { "@type":"Question", name:"What don’t you do?", acceptedAnswer:{ "@type":"Answer", text:"We avoid gas work, main electrical panel changes, roofing beyond minor repairs, and any work requiring specialty permits we don’t hold. We’ll refer trusted partners when needed." }}
+      { "@type":"Question", name:"Do you warranty your work?", acceptedAnswer:{ "@type":"Answer", text:"Yesâ€”1-year workmanship warranty on qualifying jobs. Materials per manufacturer." }},
+      { "@type":"Question", name:"What donâ€™t you do?", acceptedAnswer:{ "@type":"Answer", text:"We avoid gas work, main electrical panel changes, roofing beyond minor repairs, and any work requiring specialty permits we donâ€™t hold. Weâ€™ll refer trusted partners when needed." }}
     ]
   }), []);
 
@@ -175,7 +175,9 @@ export default function App() {
   }, [gallery, carousel]);
 
   return (
-    <div style={{ minHeight: '100vh', color: '#111', background: '#fff', overflowX: 'hidden' }}>
+     <div style={{ minHeight: '100vh', color: '#111', background: '#fff', overflowX: 'hidden' }}>
+    {/* Anchor for "Back to Top" button */}
+    <div id="top" aria-hidden="true"></div>
       <style>{`
         :root{--gold:#C7A847;--ink:#0F1115;--paper:#ffffff;--gray:#F6F7F9}
         *,*::before,*::after{ box-sizing:border-box }
@@ -244,6 +246,43 @@ export default function App() {
 
         .toTop{ position: fixed; right: 16px; bottom: 16px; z-index: 60; }
       `}</style>
+      /* ---- Mobile polish (only small screens) ---- */
+      @media (max-width: 767px) {
+        .container { padding: 0 14px; }
+        .heroContent { padding: 40px 0 !important; }
+        .heroTitle { font-size: 30px; line-height: 1.15; }
+        .sub { font-size: 15px; }
+        .grid { gap: 12px; }
+        main { padding-bottom: 72px; } /* keeps sticky bar from covering content */
+        .btn { padding: 12px 14px; }
+        .stat .value { font-size: 22px; }
+        .toTop { right: 12px; bottom: 88px; } /* clear of sticky CTA bar */
+
+        /* Nav pills: horizontal scroll instead of awkward wrapping */
+        header.sticky nav ul {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          gap: 8px;
+          padding: 4px 2px;
+          margin: 0;
+        }
+        header.sticky nav li { flex: 0 0 auto; }
+        header.sticky .btn.secondary,
+        header.sticky .btn.inverse {
+          padding: 10px 12px;
+          font-weight: 700;
+        }
+
+        /* Slightly heavier hero overlay for readability on small screens */
+        .hero::before {
+          background: linear-gradient(90deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.7) 48%, rgba(255,255,255,.3) 100%), rgba(255,255,255,.5);
+        }
+
+        /* Tighter header spacing so brand + pills fit */
+        header.sticky .container { gap: 8px; }
+        .brand .name { font-size: 16px; }
+        .splash img { object-position: center center; }
+      }
 
       <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
@@ -277,15 +316,15 @@ export default function App() {
                   Seattle-area handyman & small renovations. {BUSINESS.ctaTagline}
                 </p>
                 <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginTop:12 }}>
-                  <a className="btn" href={BUSINESS.phoneHref} aria-label={`Call ${BUSINESS.phone}`}>📞 {BUSINESS.phone}</a>
-                  <a className="btn secondary" href={BUSINESS.emailHref} aria-label={`Email ${BUSINESS.email}`}>✉️ {BUSINESS.email}</a>
-                  <a className="btn secondary" href={BUSINESS.smsHref} aria-label="Text us">💬 Text us</a>
+                  <a className="btn" href={BUSINESS.phoneHref} aria-label={`Call ${BUSINESS.phone}`}>ðŸ“ž {BUSINESS.phone}</a>
+                  <a className="btn secondary" href={BUSINESS.emailHref} aria-label={`Email ${BUSINESS.email}`}>âœ‰ï¸ {BUSINESS.email}</a>
+                  <a className="btn secondary" href={BUSINESS.smsHref} aria-label="Text us">ðŸ’¬ Text us</a>
                 </div>
                 <div style={{ marginTop: 8, color: '#555', fontSize: 13 }}>{BUSINESS.license}</div>
               </div>
               <div className="splash reveal">
                 <img src={HERO_IMAGE_URL} alt="John Hunt on site performing precise workmanship" loading="eager" decoding="async" />
-                <div className="badge" aria-hidden>On-site • Clean • Precise</div>
+                <div className="badge" aria-hidden>On-site â€¢ Clean â€¢ Precise</div>
               </div>
             </div>
           </div>
@@ -296,7 +335,7 @@ export default function App() {
           <div className="container" style={{ padding:'16px 0' }}>
             <div className="reveal" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, flexWrap:'wrap' }}>
               <div style={{ display:'flex', alignItems:'center', gap:12, color:'#111', fontWeight:800, letterSpacing:'.06em', textTransform:'uppercase' }}>
-                <span>Licensed</span><span aria-hidden>•</span><span>Insured</span><span aria-hidden>•</span><span>Free Estimates</span><span aria-hidden>—</span><span>Serving {BUSINESS.city}</span>
+                <span>Licensed</span><span aria-hidden>â€¢</span><span>Insured</span><span aria-hidden>â€¢</span><span>Free Estimates</span><span aria-hidden>â€”</span><span>Serving {BUSINESS.city}</span>
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:8 }}>
                 <div style={{ width: 28, height: 28, background: 'var(--gold)', color: '#111', fontWeight: 900, display: 'grid', placeItems: 'center', borderRadius: 6 }} aria-hidden>JH</div>
@@ -345,22 +384,22 @@ export default function App() {
                     aria-label="Previous slide"
                     onClick={carousel.prev}
                     style={{ position:'absolute', left:8, top:'50%', transform:'translateY(-50%)', background:'rgba(255,255,255,.85)', color:'#111', border:'1px solid #111', borderRadius:9999, padding:'8px 10px' }}>
-                    {'‹'}
+                    {'â€¹'}
                   </button>
                   <button
                     aria-label="Next slide"
                     onClick={carousel.next}
                     style={{ position:'absolute', right:8, top:'50%', transform:'translateY(-50%)', background:'rgba(255,255,255,.85)', color:'#111', border:'1px solid #111', borderRadius:9999, padding:'8px 10px' }}>
-                    {'›'}
+                    {'â€º'}
                   </button>
                 </>
               ) : (
-                <div className="card" style={{ padding:16 }}>Loading photos…</div>
+                <div className="card" style={{ padding:16 }}>Loading photosâ€¦</div>
               )}
             </div>
 
             <div className="reveal" style={{ display:'flex', justifyContent:'center', marginTop:16 }}>
-              <a className="btn secondary" href={BUSINESS.emailHref}>Get a Quote →</a>
+              <a className="btn secondary" href={BUSINESS.emailHref}>Get a Quote â†’</a>
             </div>
           </div>
         </section>
@@ -418,8 +457,8 @@ export default function App() {
                 { q: "Do you charge for estimates?", a: "No. Estimates are free within our service area. Remote quotes available with photos and measurements." },
                 { q: "How do you price jobs?", a: "Small tasks are often time-and-materials with a one-hour minimum. Larger projects receive a fixed-price proposal after a walkthrough." },
                 { q: "Are you licensed and insured?", a: `${BUSINESS.license}. COI available on request.` },
-                { q: "Do you warranty your work?", a: "Yes—1-year workmanship warranty on qualifying jobs. Materials per manufacturer." },
-                { q: "What don’t you do?", a: "We avoid gas work, main electrical panel changes, roofing beyond minor repairs, and any work requiring specialty permits we don’t hold. We’ll refer trusted partners when needed." }
+                { q: "Do you warranty your work?", a: "Yesâ€”1-year workmanship warranty on qualifying jobs. Materials per manufacturer." },
+                { q: "What donâ€™t you do?", a: "We avoid gas work, main electrical panel changes, roofing beyond minor repairs, and any work requiring specialty permits we donâ€™t hold. Weâ€™ll refer trusted partners when needed." }
               ].map((f, i) => (
                 <details key={i} className="card reveal" style={{ padding:16, marginBottom:8 }}>
                   <summary style={{ cursor:'pointer', fontWeight:700 }}>{f.q}</summary>
@@ -452,7 +491,7 @@ export default function App() {
           <div className="reveal">
             <h3 style={{ fontWeight:800, margin:0 }}>Details</h3>
             <div style={{ marginTop:8 }}>{BUSINESS.license}</div>
-            <div style={{ color:'#555' }}>© {new Date().getFullYear()} {BUSINESS.name}</div>
+            <div style={{ color:'#555' }}>Â© {new Date().getFullYear()} {BUSINESS.name}</div>
           </div>
         </div>
       </footer>
@@ -466,7 +505,7 @@ export default function App() {
 
       {/* Back-to-top */}
       <div className="toTop">
-        <a href="#top" onClick={(e)=>{ e.preventDefault(); window.scrollTo({top:0, behavior: prefersReducedMotion() ? "auto" : "smooth"}); }} className="btn secondary" aria-label="Back to top">↑ Top</a>
+        <a href="#top" onClick={(e)=>{ e.preventDefault(); window.scrollTo({top:0, behavior: prefersReducedMotion() ? "auto" : "smooth"}); }} className="btn secondary" aria-label="Back to top">â†‘ Top</a>
       </div>
     </div>
   );
