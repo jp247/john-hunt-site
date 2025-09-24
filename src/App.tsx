@@ -1,48 +1,10 @@
 ﻿import { useEffect, useMemo } from "react";
 import heroUrl from "./assets/hero.jpg";
-import logoUrl from "./assets/logo.png";
+import logoUrl from "./assets/logo.png";
 const _bgMatches = import.meta.glob('./assets/hero-bg.{jpg,jpeg,png}', { eager: true, as: 'url' });
-const heroBgUrl = Object.values(_bgMatches)[0] ?? '';
+const heroBgUrl: string = (Object.values(_bgMatches)[0] as string) ?? '';
 
-let heroBgUrl = "";
-try { heroBgUrl = (await import("./assets/hero-bg.jpg")).default; } catch {}
-
-const BUSINESS = {
-  name: "JOHN HUNT CONSTRUCTION",
-  owner: "John Hunt",
-  phone: "206.226.7122",
-  phoneHref: "tel:+12062267122",
-  smsHref: "sms:+12062267122",
-  email: "john+test@example.com",
-  emailHref: "mailto:john+test@example.com",
-  ctaTagline: "Licensed • Insured • Free Estimates",
-  city: "Seattle",
-  serviceAreas: ["Greater Seattle Area","King County","North Seattle","Eastside","South Seattle"],
-  license: "WA Lic # JOHNHHC920Q4",
-  hours: "Mon–Sat 8am–6pm",
-  url: "https://johnhuntbuilds.com",
-};
-
-export function computeClipInset(value: unknown): string {
-  const n = Number(value);
-  const v = Number.isFinite(n) ? Math.max(0, Math.min(100, n)) : 50;
-  return `inset(0 ${100 - v}% 0 0)`;
-}
-(function runTests() {
-  try {
-    console.assert(computeClipInset(0) === 'inset(0 100% 0 0)', 'clip at 0% failed');
-    console.assert(computeClipInset(50) === 'inset(0 50% 0 0)', 'clip at 50% failed');
-    console.assert(computeClipInset(100) === 'inset(0 0% 0 0)', 'clip at 100% failed');
-    console.assert(computeClipInset(-10) === 'inset(0 100% 0 0)', 'clamp below 0 failed');
-    console.assert(computeClipInset(200) === 'inset(0 0% 0 0)', 'clamp above 100 failed');
-    console.assert(computeClipInset("75") === 'inset(0 25% 0 0)', 'string number failed');
-    console.assert(computeClipInset("not-a-number") === 'inset(0 50% 0 0)', 'NaN default failed');
-    console.assert(computeClipInset(null) === 'inset(0 50% 0 0)', 'null default failed');
-    console.assert(computeClipInset(undefined) === 'inset(0 50% 0 0)', 'undefined default failed');
-    console.assert(computeClipInset(true) === 'inset(0 99% 0 0)', 'boolean true cast failed');
-    console.assert(computeClipInset(Infinity) === 'inset(0 50% 0 0)', 'Infinity default failed');
-    console.assert(computeClipInset(33.3).startsWith('inset(0 66.7'), 'decimal rounding sanity');
-  } catch {}
+const _bgMatches = import.meta.glob('./assets/hero-bg.{jpg,jpeg,png}', { eager: true, as: 'url' });
 })();
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 export default function App() {
@@ -178,6 +140,7 @@ useEffect(() => {
     </div>
   );
 }
+
 
 
 
