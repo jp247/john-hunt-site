@@ -1,6 +1,9 @@
 ﻿import { useEffect, useMemo } from "react";
 import heroUrl from "./assets/hero.jpg";
-import logoUrl from "./assets/logo.png";
+import logoUrl from "./assets/logo.png";
+
+const _bgMatches = import.meta.glob("./assets/hero-bg.{jpg,jpeg,png}", { eager: true, as: "url" }) as Record<string, string>;
+const heroBgUrl: string = Object.values(_bgMatches)[0] ?? "";
 const _bgMatches = import.meta.glob('./assets/hero-bg.{jpg,jpeg,png}', { eager: true, as: 'url' });
 const heroBgUrl: string = (Object.values(_bgMatches)[0] as string) ?? '';
 
@@ -140,6 +143,7 @@ useEffect(() => {
     </div>
   );
 }
+
 
 
 
