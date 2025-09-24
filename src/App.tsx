@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo } from "react";
 import heroUrl from "./assets/hero.jpg";
 import logoUrl from "./assets/logo.png";
 let heroBgUrl = "";
@@ -41,9 +41,6 @@ export function computeClipInset(value: unknown): string {
     console.assert(computeClipInset(33.3).startsWith('inset(0 66.7'), 'decimal rounding sanity');
   } catch {}
 })();
-
-const prefersReducedMotion = () =>
-  typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 export default function App() {
   const jsonLd = useMemo(() => ({
@@ -178,5 +175,6 @@ useEffect(() => {
     </div>
   );
 }
+
 
 
