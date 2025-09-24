@@ -1,7 +1,25 @@
-﻿{ "noUnusedLocals": false, "files": [],
-  "references": [
-    { "noUnusedLocals": false, "path": "./tsconfig.app.json" },
-    { "noUnusedLocals": false, "path": "./tsconfig.node.json" }
-  ]
-, "exclude": ["node_modules","dist","**/*.backup.tsx","**/*.backup.ts","**/*.ps1.txt"] }
+﻿{
+    "files":  [
 
+              ],
+    "references":  [
+                       {
+                           "noUnusedLocals":  false,
+                           "path":  "./tsconfig.app.json"
+                       },
+                       {
+                           "noUnusedLocals":  false,
+                           "path":  "./tsconfig.node.json"
+                       }
+                   ],
+    "exclude":  [
+                    "node_modules",
+                    "dist",
+                    "**/*.backup.tsx",
+                    "**/*.backup.ts",
+                    "**/*.ps1.txt"
+                ],
+    "compilerOptions":  {
+                            "noUnusedLocals":  false
+                        }
+}
