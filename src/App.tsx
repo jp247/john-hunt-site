@@ -1,4 +1,5 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
+import heroUrl from './assets/hero.jpg';
 
 // ===== Business config =====
 const BUSINESS = {
@@ -20,7 +21,7 @@ const BUSINESS = {
 // Simple cache-busting for public images
 const ASSET_VERSION = '';
 const HERO_IMAGE_URL = heroUrl;
-const HERO_BG_URL = heroBgUrl;
+const HERO_BG_URL = "";
 
 // ===== Utilities + tests (keep) =====
 export function computeClipInset(value: unknown): string {
@@ -499,5 +500,6 @@ export default function App() {
     </div>
   );
 }
+
 
 
