@@ -1,6 +1,9 @@
 ﻿import { useEffect, useMemo } from "react";
 import heroUrl from "./assets/hero.jpg";
 import logoUrl from "./assets/logo.png";
+const _bgMatches = import.meta.glob('./assets/hero-bg.{jpg,jpeg,png}', { eager: true, as: 'url' });
+const heroBgUrl = Object.values(_bgMatches)[0] ?? '';
+
 let heroBgUrl = "";
 try { heroBgUrl = (await import("./assets/hero-bg.jpg")).default; } catch {}
 
@@ -175,6 +178,7 @@ useEffect(() => {
     </div>
   );
 }
+
 
 
 
