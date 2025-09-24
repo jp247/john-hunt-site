@@ -1,4 +1,5 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
+import logoUrl from './assets/logo.png';
 import heroUrl from './assets/hero.jpg';
 
 // ===== Business config =====
@@ -494,6 +495,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
