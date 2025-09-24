@@ -74,9 +74,7 @@ export default function App() {
       { "@type": "Question", name: "Do you warranty your work?", acceptedAnswer: { "@type": "Answer", text: "Yes—1-year workmanship warranty on qualifying jobs. Materials per manufacturer." } }
     ]
   }), []);
-
-  const carousel = useCarousel(6, 5000);
-  useEffect(() => {
+useEffect(() => {
     const el = document.querySelector("header.sticky");
     const onScroll = () => el?.classList.toggle("scrolled", window.scrollY > 40);
     onScroll(); window.addEventListener("scroll", onScroll);
@@ -192,3 +190,4 @@ export default function App() {
     </div>
   );
 }
+
