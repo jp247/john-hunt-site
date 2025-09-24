@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import heroUrl from "./assets/hero.jpg";
 import logoUrl from "./assets/logo.png";
 let heroBgUrl = "";
@@ -45,18 +45,6 @@ export function computeClipInset(value: unknown): string {
 const prefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-
-function useCarousel(length: number, intervalMs: number = 5000) {
-  const [index, setIndex] = useState(0);
-  const timer = useRef<number | null>(null);
-  useEffect(() => {
-    if (length <= 1 || prefersReducedMotion()) return;
-    timer.current = window.setInterval(() => setIndex(i => (i + 1) % length), intervalMs);
-    return () => { if (timer.current != null) window.clearInterval(timer.current); };
-  }, [length, intervalMs]);
-  return { index, setIndex, prev: () => setIndex(i => (i - 1 + length) % length), next: () => setIndex(i => (i + 1) % length) };
-}
-
 export default function App() {
   const jsonLd = useMemo(() => ({
     "@context": "https://schema.org", "@type": "LocalBusiness",
@@ -190,4 +178,5 @@ useEffect(() => {
     </div>
   );
 }
+
 
