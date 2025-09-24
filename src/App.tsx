@@ -1,8 +1,9 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
-import logoUrl from './assets/logo.png';
-import heroUrl from './assets/hero.jpg';
+import heroUrl from "./assets/hero.jpg";
+import heroBgUrl from "./assets/hero-bg.jpg";
+import logoUrl from "./assets/logo.png";
 
-// ===== Business config =====
+/** ===== Business config (update freely) ===== */
 const BUSINESS = {
   name: "JOHN HUNT CONSTRUCTION",
   owner: "John Hunt",
@@ -19,12 +20,7 @@ const BUSINESS = {
   url: "https://johnhuntbuilds.com"
 };
 
-// Simple cache-busting for public images
-const ASSET_VERSION = '';
-const HERO_IMAGE_URL = heroUrl;
-const HERO_BG_URL = "";
-
-// ===== Utilities + tests (keep) =====
+/** ===== Utilities + tests (unchanged) ===== */
 export function computeClipInset(value: unknown): string {
   const n = Number(value);
   const v = Number.isFinite(n) ? Math.max(0, Math.min(100, n)) : 50;
@@ -52,7 +48,7 @@ const prefersReducedMotion = () =>
   window.matchMedia &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// ===== Carousel =====
+/** ===== Minimal carousel ===== */
 function useCarousel(length: number, intervalMs: number = 5000) {
   const [index, setIndex] = useState(0);
   const timer = useRef<number | null>(null);
@@ -66,88 +62,20 @@ function useCarousel(length: number, intervalMs: number = 5000) {
   return { index, prev, next, setIndex };
 }
 
-// ===== Auto-detect portfolio images from /public/images/portfolio =====
-type GalleryItem = { base: string; src: string; alt: string; srcset?: string; sizes?: string };
-
-async function probeImage(url: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = url + `?v=${Date.now()}`;
-  });
-}
-
-async function buildGallery(): Promise<GalleryItem[]> {
-  const max = 60;
-  const found: GalleryItem[] = [];
-  for (let i = 1; i <= max; i++) {
-    const base = `/images/portfolio/${String(i).padStart(2, "0")}`;
-    const original = `${base}.jpg`;
-    const exists = await probeImage(original);
-    if (!exists) {
-      if (i === 1) continue;
-      break;
-    }
-    const s800 = await probeImage(`${base}_800.jpg`);
-    const s1200 = await probeImage(`${base}_1200.jpg`);
-    const s1600 = await probeImage(`${base}_1600.jpg`);
-    let srcset: string | undefined;
-    let sizes = "(max-width: 768px) 100vw, 1200px";
-    if (s800 || s1200 || s1600) {
-      const parts = [];
-      if (s800) parts.push(`${base}_800.jpg 800w`);
-      if (s1200) parts.push(`${base}_1200.jpg 1200w`);
-      if (s1600) parts.push(`${base}_1600.jpg 1600w`);
-      srcset = parts.join(", ");
-    }
-    found.push({
-      base,
-      src: srcset ? `${base}_1200.jpg` : original,
-      alt: `Portfolio photo ${i}`,
-      srcset,
-      sizes
-    });
-  }
-  if (found.length === 0) {
-    for (let i = 1; i <= 6; i++) {
-      found.push({ base: `/images/portfolio/${String(i).padStart(2, "0")}`, src: `/images/portfolio/${String(i).padStart(2, "0")}.jpg`, alt: `Portfolio photo ${i}` });
-    }
-  }
-  return found;
-}
-
-// ===== Reveal-on-scroll =====
-function useReveal(selector = ".reveal", rootMargin = "0px 0px -10% 0px"){
-  useEffect(() => {
-    if (prefersReducedMotion()) return;
-    const els = Array.from(document.querySelectorAll<HTMLElement>(selector));
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add("reveal-in"); io.unobserve(e.target); } });
-    }, { rootMargin, threshold: 0.1 });
-    els.forEach(el => { el.classList.add("reveal-wait"); io.observe(el); });
-    return () => io.disconnect();
-  }, [selector, rootMargin]);
-}
-
+/** ===== Page ===== */
 export default function App() {
-  useReveal();
-
-  const [gallery, setGallery] = useState<GalleryItem[] | null>(null);
-  useEffect(() => { buildGallery().then(setGallery); }, []);
-
   const jsonLd = useMemo(() => ({
-    "@context": "https://schema.org","@type": "LocalBusiness",
-    name: BUSINESS.name, email: BUSINESS.email, telephone: BUSINESS.phone,
-    address: { "@type": "PostalAddress", addressLocality: BUSINESS.city, addressRegion: "WA" },
-    areaServed: BUSINESS.serviceAreas, openingHours: BUSINESS.hours, url: BUSINESS.url,
-    image: [HERO_IMAGE_URL], priceRange: "$$",
-    description: "Handyman and light remodeling services in Seattle: carpentry, fencing, decks, drywall, paint, fixture swaps."
+    "@context":"https://schema.org","@type":"LocalBusiness",
+    name:BUSINESS.name,email:BUSINESS.email,telephone:BUSINESS.phone,
+    address:{ "@type":"PostalAddress", addressLocality:BUSINESS.city, addressRegion:"WA" },
+    areaServed:BUSINESS.serviceAreas, openingHours:BUSINESS.hours, url:BUSINESS.url,
+    image:[heroUrl], priceRange:"$$",
+    description:"Handyman and light remodeling services in Seattle: carpentry, fencing, decks, drywall, paint, fixture swaps."
   }), []);
 
   const faqLd = useMemo(() => ({
-    "@context": "https://schema.org","@type":"FAQPage",
-    mainEntity: [
+    "@context":"https://schema.org","@type":"FAQPage",
+    mainEntity:[
       { "@type":"Question", name:"Do you charge for estimates?", acceptedAnswer:{ "@type":"Answer", text:"No. Estimates are free within our service area. Remote quotes available with photos and measurements." }},
       { "@type":"Question", name:"How do you price jobs?", acceptedAnswer:{ "@type":"Answer", text:"Small tasks are often time-and-materials with a one-hour minimum. Larger projects receive a fixed-price proposal after a walkthrough." }},
       { "@type":"Question", name:"Are you licensed and insured?", acceptedAnswer:{ "@type":"Answer", text:`${BUSINESS.license}. COI available on request.` }},
@@ -156,28 +84,18 @@ export default function App() {
     ]
   }), []);
 
-  const carousel = useCarousel(gallery?.length ?? 0, 5000);
+  const carousel = useCarousel(6, 5000); // simple 6 slides placeholder
 
   useEffect(() => {
     const el = document.querySelector('header.sticky');
     const onScroll = () => el && el.classList.toggle('scrolled', window.scrollY > 40);
-    onScroll(); window.addEventListener('scroll', onScroll);
+    onScroll();
+    window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (!gallery?.length) return;
-      if (e.key === "ArrowLeft") carousel.prev();
-      if (e.key === "ArrowRight") carousel.next();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [gallery, carousel]);
-
   return (
-    <div style={{ minHeight: '100vh', color: '#111', background: '#fff', overflowX: 'hidden' }}>
-      {/* anchor for Back-to-Top */}
+    <div style={{ minHeight:'100vh', color:'#111', background:'#fff', overflowX:'hidden' }}>
       <div id="top" aria-hidden="true"></div>
 
       <style>{`
@@ -248,39 +166,16 @@ export default function App() {
 
         .toTop{ position: fixed; right: 16px; bottom: 16px; z-index: 60; }
 
-        /* ---- Mobile polish (only small screens) ---- */
         @media (max-width: 767px) {
           .container { padding: 0 14px; }
           .heroContent { padding: 40px 0 !important; }
           .heroTitle { font-size: 30px; line-height: 1.15; }
           .sub { font-size: 15px; }
           .grid { gap: 12px; }
-          main { padding-bottom: 72px; } /* keeps sticky bar from covering content */
+          main { padding-bottom: 72px; }
           .btn { padding: 12px 14px; }
           .stat .value { font-size: 22px; }
-          .toTop { right: 12px; bottom: 88px; } /* clear of sticky CTA bar */
-
-          /* Nav pills: horizontal scroll instead of awkward wrapping */
-          header.sticky nav ul {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            gap: 8px;
-            padding: 4px 2px;
-            margin: 0;
-          }
-          header.sticky nav li { flex: 0 0 auto; }
-          header.sticky .btn.secondary,
-          header.sticky .btn.inverse {
-            padding: 10px 12px;
-            font-weight: 700;
-          }
-
-          /* Slightly heavier hero overlay for readability on small screens */
-          .hero::before {
-            background: linear-gradient(90deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.7) 48%, rgba(255,255,255,.3) 100%), rgba(255,255,255,.5);
-          }
-
-          /* Tighter header spacing so brand + pills fit */
+          .toTop { right: 12px; bottom: 88px; }
           header.sticky .container { gap: 8px; }
           .brand .name { font-size: 16px; }
         }
@@ -291,19 +186,25 @@ export default function App() {
 
       {/* Header */}
       <header className="sticky" role="banner" aria-label="Site header">
-        <div className="brand reveal" aria-label="Brand">
-			<img
-					src="/images/logo.png"
-					alt="John Hunt Construction logo"
-					style={{ width: 32, height: 32, objectFit: 'contain', borderRadius: 6 }}
-					/>
-				<span className="name">{BUSINESS.name}</span>
-</div>
+        <div className="container" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 0' }}>
+          <div className="brand reveal" aria-label="Brand">
+            <img src={logoUrl} alt="John Hunt Construction logo" style={{ width: 32, height: 32, objectFit: 'contain', borderRadius: 6 }} />
+            <span className="name">{BUSINESS.name}</span>
+          </div>
+          <nav className="reveal" aria-label="Primary">
+            <ul role="tablist" style={{ display:'flex', gap:12, flexWrap:'wrap', alignItems:'center', listStyle:'none', margin:0, padding:0 }}>
+              <li><a role="tab" className="btn secondary" href="#portfolio">Work</a></li>
+              <li><a role="tab" className="btn secondary" href="#services">Services</a></li>
+              <li><a role="tab" className="btn secondary" href="#faq">FAQ</a></li>
+              <li><a role="tab" className="btn inverse" href={BUSINESS.phoneHref}>Call {BUSINESS.phone}</a></li>
+            </ul>
+          </nav>
+        </div>
       </header>
 
       <main id="main" role="main">
-        {/* Hero with inline background to avoid template-string nesting */}
-        <section className="section hero" style={{ background: `url('${HERO_BG_URL}') center/cover no-repeat` }} aria-label="Introduction">
+        {/* Hero */}
+        <section className="section hero" style={{ background: `url('${heroBgUrl}') center/cover no-repeat` }} aria-label="Introduction">
           <div className="container heroContent" style={{ padding:'56px 0' }}>
             <div className="heroGrid">
               <div className="reveal">
@@ -319,7 +220,7 @@ export default function App() {
                 <div style={{ marginTop: 8, color: '#555', fontSize: 13 }}>{BUSINESS.license}</div>
               </div>
               <div className="splash reveal">
-                <img src={HERO_IMAGE_URL} alt="John Hunt on site performing precise workmanship" loading="eager" decoding="async" />
+                <img src={heroUrl} alt="John Hunt on site performing precise workmanship" loading="eager" decoding="async" />
                 <div className="badge" aria-hidden>On-site • Clean • Precise</div>
               </div>
             </div>
@@ -334,48 +235,35 @@ export default function App() {
                 <span>Licensed</span><span aria-hidden>•</span><span>Insured</span><span aria-hidden>•</span><span>Free Estimates</span><span aria-hidden>—</span><span>Serving {BUSINESS.city}</span>
               </div>
               <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                <div style={{ width: 28, height: 28, background: 'var(--gold)', color: '#111', fontWeight: 900, display: 'grid', placeItems: 'center', borderRadius: 6 }} aria-hidden>JH</div>
+                <img src={logoUrl} alt="" style={{ width: 28, height: 28, objectFit:'contain', borderRadius: 6 }} aria-hidden />
                 <span style={{ color:'#555', fontSize:13 }}>{BUSINESS.license}</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Portfolio */}
+        {/* Portfolio (placeholder slides reuse hero) */}
         <section id="portfolio" className="section" aria-label="Portfolio">
           <div className="container" style={{ padding:'40px 0' }}>
             <h2 className="uppercase reveal" style={{ fontSize:32, fontWeight:900 }}>Portfolio</h2>
             <p className="sub reveal" style={{ marginTop:6 }}>Selected work across {BUSINESS.city}.</p>
 
             <div className="carousel reveal" role="region" aria-roledescription="carousel" aria-label="Project photos" aria-live="polite" style={{ marginTop:20 }}>
-              {gallery && gallery.length > 0 ? (
-                <>
-                  <img
-                    src={gallery[carousel.index].src}
-                    alt={gallery[carousel.index].alt}
-                    loading="lazy"
-                    decoding="async"
-                    srcSet={gallery[carousel.index].srcset}
-                    sizes={gallery[carousel.index].sizes}
+              <img src={heroUrl} alt={`Portfolio slide ${carousel.index + 1}`} />
+              <div className="dots" role="tablist" aria-label="Slides">
+                {Array.from({length:6}).map((_, i) => (
+                  <button
+                    key={i}
+                    role="tab"
+                    aria-selected={i === carousel.index}
+                    aria-label={`Go to slide ${i + 1}`}
+                    className={`dot ${i === carousel.index ? 'active' : ''}`}
+                    onClick={() => carousel.setIndex(i)}
                   />
-                  <div className="dots" role="tablist" aria-label="Slides">
-                    {gallery.map((_, i) => (
-                      <button
-                        key={i}
-                        role="tab"
-                        aria-selected={i === carousel.index}
-                        aria-label={`Go to slide ${i + 1}`}
-                        className={`dot ${i === carousel.index ? 'active' : ''}`}
-                        onClick={() => carousel.setIndex(i)}
-                      />
-                    ))}
-                  </div>
-                  <button aria-label="Previous slide" onClick={carousel.prev} style={{ position:'absolute', left:8, top:'50%', transform:'translateY(-50%)', background:'rgba(255,255,255,.85)', color:'#111', border:'1px solid #111', borderRadius:9999, padding:'8px 10px' }}>{'‹'}</button>
-                  <button aria-label="Next slide" onClick={carousel.next} style={{ position:'absolute', right:8, top:'50%', transform:'translateY(-50%)', background:'rgba(255,255,255,.85)', color:'#111', border:'1px solid #111', borderRadius:9999, padding:'8px 10px' }}>{'›'}</button>
-                </>
-              ) : (
-                <div className="card" style={{ padding:16 }}>Loading photos…</div>
-              )}
+                ))}
+              </div>
+              <button aria-label="Previous slide" onClick={carousel.prev} style={{ position:'absolute', left:8, top:'50%', transform:'translateY(-50%)', background:'rgba(255,255,255,.85)', color:'#111', border:'1px solid #111', borderRadius:9999, padding:'8px 10px' }}>{'‹'}</button>
+              <button aria-label="Next slide" onClick={carousel.next} style={{ position:'absolute', right:8, top:'50%', transform:'translateY(-50%)', background:'rgba(255,255,255,.85)', color:'#111', border:'1px solid #111', borderRadius:9999, padding:'8px 10px' }}>{'›'}</button>
             </div>
 
             <div className="reveal" style={{ display:'flex', justifyContent:'center', marginTop:16 }}>
@@ -455,7 +343,7 @@ export default function App() {
         <div className="container" style={{ padding:'32px 0', display:'grid', gap:24 }}>
           <div className="reveal">
             <div className="brand">
-              <div style={{ width:28, height:28, background:'var(--gold)', color:'#111', fontWeight:900, display:'grid', placeItems:'center', borderRadius:6 }} aria-hidden>JH</div>
+              <img src={logoUrl} alt="John Hunt Construction logo" style={{ width:28, height:28, objectFit:'contain', borderRadius:6 }} />
               <span className="name">{BUSINESS.name}</span>
             </div>
             <p style={{ marginTop:8, color:'#555' }}>Quality fixes and small builds without the runaround.</p>
@@ -471,7 +359,7 @@ export default function App() {
           <div className="reveal">
             <h3 style={{ fontWeight:800, margin:0 }}>Details</h3>
             <div style={{ marginTop:8 }}>{BUSINESS.license}</div>
-            <div style={{ color:'#555' }}>Build: $12025-09-23 21:37:54</span> · </div>
+            <div style={{ color:'#555' }}>© {new Date().getFullYear()} {BUSINESS.name}</div>
           </div>
         </div>
       </footer>
@@ -495,13 +383,3 @@ export default function App() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
