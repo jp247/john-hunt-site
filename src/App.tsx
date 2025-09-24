@@ -8,8 +8,8 @@ const BUSINESS = {
   phone: "206.226.7122",
   phoneHref: "tel:+12062267122",
   smsHref: "sms:+12062267122",
-  email: "info@johnhuntconstruction.com",
-  emailHref: "mailto:info@johnhuntconstruction.com",
+  email: "john+test@example.com",
+  emailHref: "mailto:john+test@example.com",
   ctaTagline: "Licensed • Insured • Free Estimates",
   city: "Seattle",
   serviceAreas: ["Greater Seattle Area","King County","North Seattle","Eastside","South Seattle"],
@@ -470,7 +470,7 @@ export default function App() {
           <div className="reveal">
             <h3 style={{ fontWeight:800, margin:0 }}>Details</h3>
             <div style={{ marginTop:8 }}>{BUSINESS.license}</div>
-            <div style={{ color:'#555' }}>© {new Date().getFullYear()} {BUSINESS.name}</div>
+            <div style={{ color:'#555' }}>Build: <span data-build-tag="true">2025-09-23 21:37:10</span> · </div>
           </div>
         </div>
       </footer>
@@ -494,6 +494,8 @@ export default function App() {
     </div>
   );
 }
+
+
 
 
 
