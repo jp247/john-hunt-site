@@ -290,20 +290,14 @@ export default function App() {
 
       {/* Header */}
       <header className="sticky" role="banner" aria-label="Site header">
-        <div className="container" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 0' }}>
-          <div className="brand reveal" aria-label="Brand">
-            <div style={{ width: 32, height: 32, background: 'var(--gold)', color: '#111', fontWeight: 900, display: 'grid', placeItems: 'center', borderRadius: 6 }} aria-hidden>JH</div>
-            <span className="name">{BUSINESS.name}</span>
-          </div>
-          <nav className="reveal" aria-label="Primary">
-            <ul role="tablist" style={{ display:'flex', gap:12, flexWrap:'wrap', alignItems:'center', listStyle:'none', margin:0, padding:0 }}>
-              <li><a role="tab" className="btn secondary" href="#portfolio">Work</a></li>
-              <li><a role="tab" className="btn secondary" href="#services">Services</a></li>
-              <li><a role="tab" className="btn secondary" href="#faq">FAQ</a></li>
-              <li><a role="tab" className="btn inverse" href={BUSINESS.phoneHref}>Call {BUSINESS.phone}</a></li>
-            </ul>
-          </nav>
-        </div>
+        <div className="brand reveal" aria-label="Brand">
+			<img
+					src="/images/logo.png"
+					alt="John Hunt Construction logo"
+					style={{ width: 32, height: 32, objectFit: 'contain', borderRadius: 6 }}
+					/>
+				<span className="name">{BUSINESS.name}</span>
+</div>
       </header>
 
       <main id="main" role="main">
@@ -500,6 +494,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
