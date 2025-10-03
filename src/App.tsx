@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+ï»¿import { useEffect, useMemo, useState } from "react";
 import heroUrl from "./assets/hero.jpg";
 import logoUrl from "./assets/logo.png";
 
-/** Optional hero background (safe if missing) */
+/** Optional hero background (supports jpg/jpeg/png) */
 const _bgMatches = import.meta.glob("./assets/hero-bg.{jpg,jpeg,png}", { eager: true }) as Record<string, { default: string }>;
 const heroBgUrl: string = Object.values(_bgMatches)[0]?.default ?? "";
+
 
 /** Portfolio images: drop files into src/assets/portfolio/*.{jpg,jpeg,png} */
 const _slides = import.meta.glob("./assets/portfolio/*.{jpg,jpeg,png}", { eager: true }) as Record<string, { default: string }>;
@@ -17,13 +18,13 @@ const BUSINESS = {
   phone: "206.226.7122",
   phoneHref: "tel:+12062267122",
   smsHref: "sms:+12062267122",
-  email: "john+test@example.com",              // ? change later
-  emailHref: "mailto:john+test@example.com",   // ? change later
-  ctaTagline: "Licensed • Insured • Free Estimates",
+  email: "info@johnhuntconstruction.com",              // ? change later
+  emailHref: "mailto:info@johnhuntconstruction.com",   // ? change later
+  ctaTagline: "Licensed â€¢ Insured â€¢ Free Estimates",
   city: "Seattle",
   serviceAreas: ["Greater Seattle Area","King County","North Seattle","Eastside","South Seattle"],
   license: "WA Lic # JOHNHHC920Q4",
-  hours: "Mon–Sat 8am–6pm",
+  hours: "Monâ€“Sat 8amâ€“6pm",
   url: "https://johnhuntbuilds.com",
 };
 
@@ -53,19 +54,23 @@ export function computeClipInset(value: unknown): string {
 /* =================== Tiny carousel hook =================== */
 function useCarousel(length: number, intervalMs = 5000) {
   const [index, setIndex] = useState(0);
+
+  // use a timeout that resets whenever index changes
   useEffect(() => {
     if (length <= 1) return;
-    const id = setInterval(() => setIndex(i => (i + 1) % length), intervalMs);
-    return () => clearInterval(id);
-  }, [length, intervalMs]);
+    const id = setTimeout(() => setIndex(i => (i + 1) % length), intervalMs);
+    return () => clearTimeout(id);
+  }, [length, intervalMs, index]);
+
   const prev = () => setIndex(i => (i - 1 + length) % length);
   const next = () => setIndex(i => (i + 1) % length);
   return { index, prev, next, setIndex };
 }
 
+
 export default function App() {
   const slides = useMemo(() => slideUrls.length ? slideUrls : [heroUrl], []);
-  const carousel = useCarousel(slides.length, 5000);
+  const carousel = useCarousel(slides.length, 6500);
 
   const jsonLd = useMemo(() => ({
     "@context": "https://schema.org",
@@ -86,7 +91,7 @@ export default function App() {
       { "@type": "Question", name: "Do you charge for estimates?", acceptedAnswer: { "@type": "Answer", text: "No. Estimates are free within our service area. Remote quotes available with photos and measurements." } },
       { "@type": "Question", name: "How do you price jobs?", acceptedAnswer: { "@type": "Answer", text: "Small tasks are T&M with a one-hour minimum. Larger projects receive a fixed-price proposal after a walkthrough." } },
       { "@type": "Question", name: "Are you licensed and insured?", acceptedAnswer: { "@type": "Answer", text: `${BUSINESS.license}. COI available on request.` } },
-      { "@type": "Question", name: "Do you warranty your work?", acceptedAnswer: { "@type": "Answer", text: "Yes—1-year workmanship warranty on qualifying jobs. Materials per manufacturer." } },
+      { "@type": "Question", name: "Do you warranty your work?", acceptedAnswer: { "@type": "Answer", text: "Yesâ€”1-year workmanship warranty on qualifying jobs. Materials per manufacturer." } },
     ]
   }), []);
 
@@ -107,6 +112,10 @@ export default function App() {
         html,body,#root{height:100%;width:100%}
         html,body{margin:0;padding:0;overflow-x:hidden}
         body{background:var(--paper);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
+		
+		.brandLogo{ width:34px; height:34px; object-fit:contain; border-radius:6px }
+@media(min-width:1024px){ .brandLogo{ width:42px; height:42px } }
+
 
         .container{max-width:1200px;margin:0 auto;padding:0 18px}
 
@@ -174,7 +183,7 @@ export default function App() {
       <header className="sticky" role="banner" aria-label="Site header">
         <div className="container" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 0", gap:12 }}>
           <div className="brand" aria-label="Brand" style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <img src={logoUrl} alt="John Hunt Construction logo" style={{ width:32, height:32, objectFit:"contain", borderRadius:6 }} />
+            <img src={logoUrl} alt="John Hunt Construction logo" className="brandLogo" />
             <span className="name">{BUSINESS.name}</span>
           </div>
           <nav aria-label="Primary">
@@ -190,7 +199,7 @@ export default function App() {
 
       <main id="main" role="main">
         {/* Hero */}
-        <section className="section heroBand">
+        <section className="section heroBand" style={{ background: heroBgUrl ? `url('${heroBgUrl}') center/cover no-repeat` : undefined }}>
           <div className="container" style={{ position:"relative", zIndex:1, padding:"64px 0" }}>
             <div className="heroWrap">
               <div>
@@ -199,21 +208,21 @@ export default function App() {
                   Seattle-area handyman & small renovations. {BUSINESS.ctaTagline}
                 </p>
                 <div style={{ display:"flex", gap:12, flexWrap:"wrap", marginTop:12 }}>
-                  <a className="btn" href={BUSINESS.phoneHref}>?? {BUSINESS.phone}</a>
-                  <a className="btn secondary" href={BUSINESS.emailHref}>?? {BUSINESS.email}</a>
-                  <a className="btn secondary" href={BUSINESS.smsHref}>?? Text us</a>
+                  <a className="btn" href={BUSINESS.phoneHref}>Call {BUSINESS.phone}</a>
+                  <a className="btn secondary" href={BUSINESS.emailHref}>Email {BUSINESS.email}</a>
+                  <a className="btn secondary" href={BUSINESS.smsHref}>Text us</a>
                 </div>
                 <div style={{ marginTop:8, color:"#555", fontSize:13 }}>{BUSINESS.license}</div>
               </div>
               <div className="splash" aria-label="Hero image">
                 <img src={heroUrl} alt="On-site craftsmanship by John Hunt" loading="eager" decoding="async" />
-                <div className="badge" aria-hidden>On-site • Clean • Precise</div>
+                <div className="badge" aria-hidden>On-site â€¢ Clean â€¢ Precise</div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Portfolio — carousel */}
+        {/* Portfolio â€” carousel */}
         <section id="portfolio" className="section">
           <div className="container" style={{ padding:"44px 0" }}>
             <h2 className="sectionTitle">Portfolio</h2>
@@ -234,19 +243,19 @@ export default function App() {
               </div>
               {slides.length > 1 && (
                 <>
-                  <button aria-label="Previous slide" className="navBtn left" onClick={carousel.prev}>‹</button>
-                  <button aria-label="Next slide" className="navBtn right" onClick={carousel.next}>›</button>
+                  <button aria-label="Previous slide" className="navBtn left" onClick={carousel.prev}>â€¹</button>
+                  <button aria-label="Next slide" className="navBtn right" onClick={carousel.next}>â€º</button>
                 </>
               )}
             </div>
           </div>
         </section>
 
-        {/* Services — premium card grid */}
+        {/* Services â€” premium card grid */}
         <section id="services" className="section sectionBand">
           <div className="container" style={{ padding:"48px 0" }}>
             <h2 className="sectionTitle">Services</h2>
-            <p className="sectionSub">The most common work we’re asked to do.</p>
+            <p className="sectionSub">The most common work weâ€™re asked to do.</p>
 
             <div className="grid sm-2 lg-3" style={{ marginTop:16 }}>
               <div className="card pad">
@@ -281,7 +290,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* FAQ — tidy cards */}
+        {/* FAQ â€” tidy cards */}
         <section id="faq" className="section sectionBand">
           <div className="container" style={{ maxWidth:800, padding:"48px 0" }}>
             <h2 className="sectionTitle">FAQ</h2>
@@ -300,7 +309,7 @@ export default function App() {
               </details>
               <details className="faqCard">
                 <summary>Do you warranty your work?</summary>
-                <div>Yes—1-year workmanship warranty on qualifying jobs. Materials per manufacturer.</div>
+                <div>Yesâ€”1-year workmanship warranty on qualifying jobs. Materials per manufacturer.</div>
               </details>
             </div>
           </div>
@@ -311,7 +320,7 @@ export default function App() {
         <div className="container" style={{ padding:"32px 0", display:"grid", gap:24 }}>
           <div>
             <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-              <img src={logoUrl} alt="" style={{ width:28, height:28, objectFit:"contain", borderRadius:6 }} />
+              <img src={logoUrl} alt="John Hunt Construction logo" className="brandLogo" />
               <span style={{ fontWeight:900 }}>{BUSINESS.name}</span>
             </div>
             <p style={{ marginTop:8, color:"#555" }}>Quality fixes and small builds without the runaround.</p>
@@ -327,10 +336,11 @@ export default function App() {
           <div>
             <h3 style={{ fontWeight:800, margin:0 }}>Details</h3>
             <div style={{ marginTop:8 }}>{BUSINESS.license}</div>
-            <div style={{ color:"#555" }}>© {new Date().getFullYear()} {BUSINESS.name}</div>
+            <div style={{ color:"#555" }}>Â© {new Date().getFullYear()} {BUSINESS.name}</div>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+
