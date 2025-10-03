@@ -1,4 +1,4 @@
-Ôªøimport { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import heroUrl from "./assets/hero.jpg";
 import logoUrl from "./assets/logo.png";
 
@@ -17,13 +17,13 @@ const BUSINESS = {
   phone: "206.226.7122",
   phoneHref: "tel:+12062267122",
   smsHref: "sms:+12062267122",
-  email: "john+test@example.com",              // ‚Üê change later
-  emailHref: "mailto:john+test@example.com",   // ‚Üê change later
-  ctaTagline: "Licensed ‚Ä¢ Insured ‚Ä¢ Free Estimates",
+  email: "john+test@example.com",              // ? change later
+  emailHref: "mailto:john+test@example.com",   // ? change later
+  ctaTagline: "Licensed ï Insured ï Free Estimates",
   city: "Seattle",
   serviceAreas: ["Greater Seattle Area","King County","North Seattle","Eastside","South Seattle"],
   license: "WA Lic # JOHNHHC920Q4",
-  hours: "Mon‚ÄìSat 8am‚Äì6pm",
+  hours: "MonñSat 8amñ6pm",
   url: "https://johnhuntbuilds.com",
 };
 
@@ -86,7 +86,7 @@ export default function App() {
       { "@type": "Question", name: "Do you charge for estimates?", acceptedAnswer: { "@type": "Answer", text: "No. Estimates are free within our service area. Remote quotes available with photos and measurements." } },
       { "@type": "Question", name: "How do you price jobs?", acceptedAnswer: { "@type": "Answer", text: "Small tasks are T&M with a one-hour minimum. Larger projects receive a fixed-price proposal after a walkthrough." } },
       { "@type": "Question", name: "Are you licensed and insured?", acceptedAnswer: { "@type": "Answer", text: `${BUSINESS.license}. COI available on request.` } },
-      { "@type": "Question", name: "Do you warranty your work?", acceptedAnswer: { "@type": "Answer", text: "Yes‚Äî1-year workmanship warranty on qualifying jobs. Materials per manufacturer." } },
+      { "@type": "Question", name: "Do you warranty your work?", acceptedAnswer: { "@type": "Answer", text: "Yesó1-year workmanship warranty on qualifying jobs. Materials per manufacturer." } },
     ]
   }), []);
 
@@ -199,21 +199,21 @@ export default function App() {
                   Seattle-area handyman & small renovations. {BUSINESS.ctaTagline}
                 </p>
                 <div style={{ display:"flex", gap:12, flexWrap:"wrap", marginTop:12 }}>
-                  <a className="btn" href={BUSINESS.phoneHref}>üìû {BUSINESS.phone}</a>
-                  <a className="btn secondary" href={BUSINESS.emailHref}>‚úâÔ∏è {BUSINESS.email}</a>
-                  <a className="btn secondary" href={BUSINESS.smsHref}>üí¨ Text us</a>
+                  <a className="btn" href={BUSINESS.phoneHref}>?? {BUSINESS.phone}</a>
+                  <a className="btn secondary" href={BUSINESS.emailHref}>?? {BUSINESS.email}</a>
+                  <a className="btn secondary" href={BUSINESS.smsHref}>?? Text us</a>
                 </div>
                 <div style={{ marginTop:8, color:"#555", fontSize:13 }}>{BUSINESS.license}</div>
               </div>
               <div className="splash" aria-label="Hero image">
                 <img src={heroUrl} alt="On-site craftsmanship by John Hunt" loading="eager" decoding="async" />
-                <div className="badge" aria-hidden>On-site ‚Ä¢ Clean ‚Ä¢ Precise</div>
+                <div className="badge" aria-hidden>On-site ï Clean ï Precise</div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Portfolio ‚Äî carousel */}
+        {/* Portfolio ó carousel */}
         <section id="portfolio" className="section">
           <div className="container" style={{ padding:"44px 0" }}>
             <h2 className="sectionTitle">Portfolio</h2>
@@ -234,19 +234,19 @@ export default function App() {
               </div>
               {slides.length > 1 && (
                 <>
-                  <button aria-label="Previous slide" className="navBtn left" onClick={carousel.prev}>‚Äπ</button>
-                  <button aria-label="Next slide" className="navBtn right" onClick={carousel.next}>‚Ä∫</button>
+                  <button aria-label="Previous slide" className="navBtn left" onClick={carousel.prev}>ã</button>
+                  <button aria-label="Next slide" className="navBtn right" onClick={carousel.next}>õ</button>
                 </>
               )}
             </div>
           </div>
         </section>
 
-        {/* Services ‚Äî premium card grid */}
+        {/* Services ó premium card grid */}
         <section id="services" className="section sectionBand">
           <div className="container" style={{ padding:"48px 0" }}>
             <h2 className="sectionTitle">Services</h2>
-            <p className="sectionSub">The most common work we‚Äôre asked to do.</p>
+            <p className="sectionSub">The most common work weíre asked to do.</p>
 
             <div className="grid sm-2 lg-3" style={{ marginTop:16 }}>
               <div className="card pad">
@@ -281,7 +281,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* FAQ ‚Äî tidy cards */}
+        {/* FAQ ó tidy cards */}
         <section id="faq" className="section sectionBand">
           <div className="container" style={{ maxWidth:800, padding:"48px 0" }}>
             <h2 className="sectionTitle">FAQ</h2>
@@ -300,7 +300,7 @@ export default function App() {
               </details>
               <details className="faqCard">
                 <summary>Do you warranty your work?</summary>
-                <div>Yes‚Äî1-year workmanship warranty on qualifying jobs. Materials per manufacturer.</div>
+                <div>Yesó1-year workmanship warranty on qualifying jobs. Materials per manufacturer.</div>
               </details>
             </div>
           </div>
@@ -327,7 +327,7 @@ export default function App() {
           <div>
             <h3 style={{ fontWeight:800, margin:0 }}>Details</h3>
             <div style={{ marginTop:8 }}>{BUSINESS.license}</div>
-            <div style={{ color:"#555" }}>¬© {new Date().getFullYear()} {BUSINESS.name}</div>
+            <div style={{ color:"#555" }}>© {new Date().getFullYear()} {BUSINESS.name}</div>
           </div>
         </div>
       </footer>
