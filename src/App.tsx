@@ -173,7 +173,14 @@ export default function App() {
         .faqCard{border:1px solid #e5e5e5;border-radius:12px;padding:12px}
         .faqCard summary{cursor:pointer;font-weight:700}
         .faqCard div{margin-top:8px;color:#555}
-      `}</style>
+      `}        /* JH premium CSS */
+        .brandLogo{ width:34px; height:34px; object-fit:contain; border-radius:6px }
+        @media(min-width:1024px){ .brandLogo{ width:42px; height:42px } }
+        .card.pad:hover{ transform:translateY(-2px); box-shadow:0 16px 40px rgba(15,17,21,.10); transition:all .2s }
+        header.sticky nav ul{ display:flex; gap:10px; flex-wrap:nowrap; overflow-x:auto; padding:6px 0; margin:0; list-style:none; -webkit-overflow-scrolling:touch; scrollbar-width:none }
+        header.sticky nav ul::-webkit-scrollbar{ display:none }
+        header.sticky nav li{ flex:0 0 auto }
+      </style>
 
       {/* Structured data */}
       <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
@@ -343,4 +350,5 @@ export default function App() {
     </div>
   );
 }
+
 
